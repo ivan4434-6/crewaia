@@ -216,6 +216,7 @@ SUPPORTED_NATIVE_PROVIDERS: Final[list[str]] = [
     "dashscope",
     "snowflake",
     "deepinfra",
+    "groq",
 ]
 
 
@@ -241,6 +242,7 @@ PROVIDER_ALIASES: Final[dict[str, str]] = {
     "dashscope": "dashscope",
     "snowflake": "snowflake",
     "deepinfra": "deepinfra",
+    "groq": "groq",
 }
 
 
@@ -461,6 +463,10 @@ class LLM(BaseLLM):
 
         if provider == "openrouter":
             # OpenRouter uses org/model format but accepts anything
+            return True
+
+        if provider == "groq":
+            # Groq serves any model name after the prefix.
             return True
 
         if provider == "deepinfra":
@@ -697,6 +703,7 @@ class LLM(BaseLLM):
             "cerebras",
             "dashscope",
             "deepinfra",
+            "groq",
         }
         if provider in openai_compatible_providers:
             from crewai.llms.providers.openai_compatible.completion import (
