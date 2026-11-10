@@ -216,6 +216,7 @@ SUPPORTED_NATIVE_PROVIDERS: Final[list[str]] = [
     "dashscope",
     "snowflake",
     "deepinfra",
+    "hostinger_router",
 ]
 
 
@@ -241,6 +242,7 @@ PROVIDER_ALIASES: Final[dict[str, str]] = {
     "dashscope": "dashscope",
     "snowflake": "snowflake",
     "deepinfra": "deepinfra",
+    "hostinger_router": "hostinger_router",
 }
 
 
@@ -468,6 +470,11 @@ class LLM(BaseLLM):
             # deepinfra/<org>/<model>: one slash with both parts non-empty.
             parts = model_lower.split("/")
             return len(parts) == 2 and all(parts)
+
+        if provider == "hostinger_router":
+            # Hostinger Router serves models from several vendors under bare ids
+            # (gpt-5-mini, claude-sonnet-5, gemini-3.5-flash), so accept any name.
+            return True
 
         if provider == "snowflake":
             return True
@@ -697,6 +704,7 @@ class LLM(BaseLLM):
             "cerebras",
             "dashscope",
             "deepinfra",
+            "hostinger_router",
         }
         if provider in openai_compatible_providers:
             from crewai.llms.providers.openai_compatible.completion import (
