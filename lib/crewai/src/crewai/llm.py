@@ -216,6 +216,9 @@ SUPPORTED_NATIVE_PROVIDERS: Final[list[str]] = [
     "dashscope",
     "snowflake",
     "deepinfra",
+    "token_kiosk",
+    "tokenkiosk",
+    "token-kiosk",
 ]
 
 
@@ -241,6 +244,9 @@ PROVIDER_ALIASES: Final[dict[str, str]] = {
     "dashscope": "dashscope",
     "snowflake": "snowflake",
     "deepinfra": "deepinfra",
+    "token_kiosk": "token_kiosk",
+    "tokenkiosk": "token_kiosk",
+    "token-kiosk": "token_kiosk",
 }
 
 
@@ -461,6 +467,10 @@ class LLM(BaseLLM):
 
         if provider == "openrouter":
             # OpenRouter uses org/model format but accepts anything
+            return True
+
+        if provider == "token_kiosk":
+            # Token Kiosk accepts any model (frontier or open-source)
             return True
 
         if provider == "deepinfra":
@@ -697,6 +707,9 @@ class LLM(BaseLLM):
             "cerebras",
             "dashscope",
             "deepinfra",
+            "token_kiosk",
+            "tokenkiosk",
+            "token-kiosk",
         }
         if provider in openai_compatible_providers:
             from crewai.llms.providers.openai_compatible.completion import (
