@@ -214,6 +214,7 @@ SUPPORTED_NATIVE_PROVIDERS: Final[list[str]] = [
     "hosted_vllm",
     "cerebras",
     "dashscope",
+    "flexai",
     "snowflake",
     "deepinfra",
 ]
@@ -239,6 +240,7 @@ PROVIDER_ALIASES: Final[dict[str, str]] = {
     "hosted_vllm": "hosted_vllm",
     "cerebras": "cerebras",
     "dashscope": "dashscope",
+    "flexai": "flexai",
     "snowflake": "snowflake",
     "deepinfra": "deepinfra",
 }
@@ -469,6 +471,10 @@ class LLM(BaseLLM):
             parts = model_lower.split("/")
             return len(parts) == 2 and all(parts)
 
+        if provider == "flexai":
+            # FlexAI serves open-weight models under their own ids
+            return True
+
         if provider == "snowflake":
             return True
 
@@ -697,6 +703,7 @@ class LLM(BaseLLM):
             "cerebras",
             "dashscope",
             "deepinfra",
+            "flexai",
         }
         if provider in openai_compatible_providers:
             from crewai.llms.providers.openai_compatible.completion import (
