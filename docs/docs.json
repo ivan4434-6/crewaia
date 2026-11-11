@@ -325,6 +325,7 @@
                         "icon": "plug",
                         "pages": [
                           "edge/en/tools/integration/overview",
+                          "edge/en/tools/integration/asyntai",
                           "edge/en/tools/integration/bedrockinvokeagenttool",
                           "edge/en/tools/integration/crewaiautomationtool",
                           "edge/en/tools/integration/mergeagenthandlertool"
@@ -22517,6 +22518,7 @@
                         "icon": "plug",
                         "pages": [
                           "edge/pt-BR/tools/integration/overview",
+                          "edge/pt-BR/tools/integration/asyntai",
                           "edge/pt-BR/tools/integration/bedrockinvokeagenttool",
                           "edge/pt-BR/tools/integration/crewaiautomationtool"
                         ]
@@ -42912,6 +42914,7 @@
                         "icon": "plug",
                         "pages": [
                           "edge/ko/tools/integration/overview",
+                          "edge/ko/tools/integration/asyntai",
                           "edge/ko/tools/integration/bedrockinvokeagenttool",
                           "edge/ko/tools/integration/crewaiautomationtool"
                         ]
@@ -63980,6 +63983,7 @@
                         "icon": "plug",
                         "pages": [
                           "edge/ar/tools/integration/overview",
+                          "edge/ar/tools/integration/asyntai",
                           "edge/ar/tools/integration/bedrockinvokeagenttool",
                           "edge/ar/tools/integration/crewaiautomationtool"
                         ]
