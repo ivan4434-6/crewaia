@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import mimetypes
 import re
 import threading
 from collections.abc import Callable
@@ -452,3 +453,50 @@ def test_who_may_frame_the_app_is_sent_in_a_form_browsers_accept(
     )  # one directive only: nothing can ride along
     with pytest.raises(ValidationError, match="allowed_frame_ancestors"):
         get_settings()
+
+
+def test_the_interface_is_served_as_code_even_where_the_system_calls_it_plain_text(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, settings_env: Callable[..., None]
+) -> None:
+    """On Windows ``mimetypes`` copies the registry, where ``.js`` is often ``text/plain``.
+
+    This app sends ``nosniff``, so a browser would refuse that script and show a blank page.
+    """
+    from creator_office.main import create_app
+
+    dist = tmp_path / "dist"
+    (dist / "assets").mkdir(parents=True)
+    (dist / "index.html").write_text(
+        "<!doctype html><title>x</title>", encoding="utf-8"
+    )
+    (dist / "assets" / "app.js").write_text("export {};", encoding="utf-8")
+    (dist / "assets" / "app.css").write_text("body {}", encoding="utf-8")
+    (dist / "favicon.svg").write_text(
+        "<svg xmlns='http://www.w3.org/2000/svg'/>", encoding="utf-8"
+    )
+    mimetypes.guess_type("x.js")  # the table is loaded on first use
+    for suffix in (".js", ".css", ".svg", ".html"):
+        monkeypatch.setitem(mimetypes.types_map, suffix, "text/plain")
+    settings_env(FRONTEND_DIST=str(dist))
+
+    with TestClient(create_app()) as client:
+        served = {
+            path: client.get(path).headers
+            for path in (
+                "/",
+                "/proyectos",
+                "/assets/app.js",
+                "/assets/app.css",
+                "/favicon.svg",
+            )
+        }
+    assert {path: headers["content-type"] for path, headers in served.items()} == {
+        "/": "text/html; charset=utf-8",
+        "/proyectos": "text/html; charset=utf-8",  # a client-side route gets the page
+        "/assets/app.js": "text/javascript; charset=utf-8",
+        "/assets/app.css": "text/css; charset=utf-8",
+        "/favicon.svg": "image/svg+xml",
+    }
+    assert {headers["x-content-type-options"] for headers in served.values()} == {
+        "nosniff"
+    }

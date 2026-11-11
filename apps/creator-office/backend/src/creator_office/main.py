@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import mimetypes
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from typing import Any
@@ -76,6 +77,17 @@ def _error(status: int, message: str, code: str = "", **extra: Any) -> JSONRespo
         status_code=status,
         headers={"Cache-Control": "no-store"},
     )
+
+
+# Content types a browser checks before it runs or applies a file. They are stated
+# here rather than left to the system: on Windows ``mimetypes`` copies the registry,
+# where ``.js`` is often ``text/plain``, and with ``nosniff`` the page would stay blank.
+_WEB_TYPES = {
+    ".css": "text/css",
+    ".html": "text/html",
+    ".js": "text/javascript",
+    ".svg": "image/svg+xml",
+}
 
 
 def create_app() -> FastAPI:
@@ -187,6 +199,8 @@ def create_app() -> FastAPI:
     def api_not_found(rest: str) -> JSONResponse:
         return _error(404, "Esa ruta de la API no existe.", "not_found")
 
+    for suffix, content_type in _WEB_TYPES.items():
+        mimetypes.add_type(content_type, suffix)
     dist = settings.frontend_dist
     if (dist / "assets").is_dir():
         app.mount("/assets", StaticFiles(directory=dist / "assets"), name="assets")
