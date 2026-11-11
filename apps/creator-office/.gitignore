@@ -1,0 +1,16 @@
+# Dependencies and builds
+node_modules/
+.venv/
+frontend/dist/
+*.tsbuildinfo
+
+# Local runtime data (database, uploads, generated keys)
+data/
+.env
+.env.local
+
+# Tooling caches
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.vite/
